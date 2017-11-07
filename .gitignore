@@ -1,0 +1,17 @@
+.qmake.stash
+Makefile
+*.o
+libv_repExtReflexxesTypeII.1.0.0.dylib
+libv_repExtReflexxesTypeII.1.0.dylib
+libv_repExtReflexxesTypeII.1.dylib
+libv_repExtReflexxesTypeII.dylib
+libv_repExtReflexxesTypeII.so
+libv_repExtReflexxesTypeII.so.1
+libv_repExtReflexxesTypeII.so.1.0
+libv_repExtReflexxesTypeII.so.1.0.0
+Makefile.Debug
+Makefile.Release
+debug/
+object_script.v_repExtReflexxesTypeII.Debug
+object_script.v_repExtReflexxesTypeII.Release
+release/
