@@ -3,14 +3,14 @@ include(config.pri)
 QT -= core
 QT -= gui
 
-TARGET = v_repExtReflexxesTypeII
+TARGET = simExtReflexxesTypeII
 TEMPLATE = lib
 
 DEFINES -= UNICODE
 DEFINES += QT_COMPIL
 CONFIG += shared
 INCLUDEPATH += "ReflexxesTypeII/include"
-INCLUDEPATH += "v_repExtReflexxesTypeII"
+INCLUDEPATH += "simExtReflexxesTypeII"
 INCLUDEPATH += "../include"
 
 *-msvc* {
@@ -40,18 +40,18 @@ INCLUDEPATH += "../include"
 INCLUDEPATH += $$BOOST_INCLUDEPATH
 
 win32 {
-    DEFINES += WIN_VREP
+    DEFINES += WIN_SIM
 }
 win32-g++ {
     LIBS += -lshlwapi
 }
 
 macx {
-    DEFINES += MAC_VREP
+    DEFINES += MAC_SIM
 }
 
 unix:!macx {
-    DEFINES += LIN_VREP
+    DEFINES += LIN_SIM
 }
 
 unix:!symbian {
@@ -64,8 +64,8 @@ unix:!symbian {
 }
 
 HEADERS += \
-    ../include/v_repLib.h \
-    v_repExtReflexxesTypeII/v_repExtReflexxesTypeII.h \
+    ../include/simLib.h \
+    simExtReflexxesTypeII/simExtReflexxesTypeII.h \
     ReflexxesTypeII/src/TypeIIRML/ReflexxesAPI.h \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLCalculatePositionalExtrems.h \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLDecisions.h \
@@ -96,8 +96,8 @@ HEADERS += \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLVelocitySetupPhaseSyncSelectionVector.h \
 
 SOURCES += \
-    ../common/v_repLib.cpp \
-    v_repExtReflexxesTypeII/v_repExtReflexxesTypeII.cpp \
+    ../common/simLib.cpp \
+    simExtReflexxesTypeII/simExtReflexxesTypeII.cpp \
     ReflexxesTypeII/src/TypeIIRML/ReflexxesAPI.cpp \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLCalculatePositionalExtrems.cpp \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLDecisions.cpp \

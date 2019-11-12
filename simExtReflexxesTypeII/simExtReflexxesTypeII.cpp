@@ -1,5 +1,5 @@
-#include "v_repExtReflexxesTypeII.h"
-#include "v_repLib.h"
+#include "simExtReflexxesTypeII.h"
+#include "simLib.h"
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include <vector>
@@ -15,7 +15,7 @@
 	#pragma comment(lib, "Shlwapi.lib")
 #endif /* _WIN32 */
 
-#define PLUGIN_VERSION 2 // 2 since V-REP V3.4.1
+#define PLUGIN_VERSION 2 // 2 since CoppeliaSim V3.4.1
 
 struct SObj
 {
@@ -39,12 +39,12 @@ int nextObjectHandle=0;
 std::vector<SObj> allObjects;
 
 
-LIBRARY vrepLib; // the V-REP library that we will dynamically load and bind
+LIBRARY simLib; // the CoppeliaSim library that we will dynamically load and bind
 
 //FILE* file=NULL;
 
 
-VREP_DLLEXPORT unsigned char v_repStart(void* reservedPointer,int reservedInt)
+SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 {
 	// 1. Figure out this plugin's directory:
 	char curDirAndFile[1024];
@@ -55,37 +55,37 @@ VREP_DLLEXPORT unsigned char v_repStart(void* reservedPointer,int reservedInt)
 	getcwd(curDirAndFile, sizeof(curDirAndFile));
 #endif
 	std::string currentDirAndPath(curDirAndFile);
-	// 2. Append the V-REP library's name:
+    // 2. Append the CoppeliaSim library's name:
 	std::string temp(currentDirAndPath);
 #ifdef _WIN32
-	temp+="\\v_rep.dll";
+	temp+="\\coppeliaSim.dll";
 #elif defined (__linux)
-	temp+="/libv_rep.so";
+	temp+="/libcoppeliaSim.so";
 #elif defined (__APPLE__)
-	temp+="/libv_rep.dylib";
+	temp+="/libcoppeliaSim.dylib";
 #endif /* __linux || __APPLE__ */
-	// 3. Load the V-REP library:
-	vrepLib=loadVrepLibrary(temp.c_str());
-	if (vrepLib==NULL)
+    // 3. Load the CoppeliaSim library:
+	simLib=loadSimLibrary(temp.c_str());
+	if (simLib==NULL)
 	{
-		std::cout << "Error, could not find or correctly load the V-REP library. Cannot start 'ReflexxesTypeII' plugin.\n";
-		return(0); // Means error, V-REP will unload this plugin
+        std::cout << "Error, could not find or correctly load the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.\n";
+        return(0); // Means error, CoppeliaSim will unload this plugin
 	}
-	if (getVrepProcAddresses(vrepLib)==0)
+	if (getSimProcAddresses(simLib)==0)
 	{
-		std::cout << "Error, could not find all required functions in the V-REP library. Cannot start 'ReflexxesTypeII' plugin.\n";
-		unloadVrepLibrary(vrepLib);
-		return(0); // Means error, V-REP will unload this plugin
+        std::cout << "Error, could not find all required functions in the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.\n";
+		unloadSimLibrary(simLib);
+        return(0); // Means error, CoppeliaSim will unload this plugin
 	}
 
-	// Check the version of V-REP:
-    int vrepVer,vrepRev;
-    simGetIntegerParameter(sim_intparam_program_version,&vrepVer);
-    simGetIntegerParameter(sim_intparam_program_revision,&vrepRev);
-    if( (vrepVer<30400) || ((vrepVer==30400)&&(vrepRev<9)) )
+    // Check the version of CoppeliaSim:
+    int simVer,simRev;
+    simGetIntegerParameter(sim_intparam_program_version,&simVer);
+    simGetIntegerParameter(sim_intparam_program_revision,&simRev);
+    if( (simVer<30400) || ((simVer==30400)&&(simRev<9)) )
     {
-        std::cout << "Sorry, your V-REP copy is somewhat old, V-REP 3.4.0 rev9 or higher is required. Cannot start 'ReflexxesTypeIV' plugin.\n";
-        unloadVrepLibrary(vrepLib);
+        std::cout << "Sorry, your CoppeliaSim copy is somewhat old, CoppeliaSim 3.4.0 rev9 or higher is required. Cannot start 'ReflexxesTypeIV' plugin.\n";
+        unloadSimLibrary(simLib);
         return(0);
     }
 
@@ -106,14 +106,14 @@ VREP_DLLEXPORT unsigned char v_repStart(void* reservedPointer,int reservedInt)
 	return(PLUGIN_VERSION); // initialization went fine, we return the version number of this plugin (can be queried with simGetModuleName)
 }
 
-VREP_DLLEXPORT void v_repEnd()
+SIM_DLLEXPORT void simEnd()
 {
 //	fclose(file);
 
-	unloadVrepLibrary(vrepLib); // release the library
+	unloadSimLibrary(simLib); // release the library
 }
 
-VREP_DLLEXPORT void* v_repMessage(int message,int* auxiliaryData,void* customData,int* replyData)
+SIM_DLLEXPORT void* simMessage(int message,int* auxiliaryData,void* customData,int* replyData)
 {
 	// Keep following 5 lines at the beginning and unchanged:
 	int errorModeSaved;
@@ -638,7 +638,7 @@ VREP_DLLEXPORT void* v_repMessage(int message,int* auxiliaryData,void* customDat
 	}
 
 	if (message==sim_message_eventcallback_rmlinfo)
-	{ // the sim_message_eventcallback_rmlinfo is used in V-REP internally
+    { // the sim_message_eventcallback_rmlinfo is used in CoppeliaSim internally
 		if (auxiliaryData[0]==0)
 		{ // means: give me the Dofs of this object
 			replyData[1]=-1;
