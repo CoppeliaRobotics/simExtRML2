@@ -44,7 +44,7 @@ static LIBRARY simLib; // the CoppeliaSim library that we will dynamically load 
 bool canOutputMsg(int msgType)
 {
     int plugin_verbosity = sim_verbosity_default;
-    simGetModuleInfo("Cam",sim_moduleinfo_verbosity,nullptr,&plugin_verbosity);
+    simGetModuleInfo("ReflexxesTypeII",sim_moduleinfo_verbosity,nullptr,&plugin_verbosity);
     return(plugin_verbosity>=msgType);
 }
 
