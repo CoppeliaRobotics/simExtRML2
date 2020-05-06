@@ -34,15 +34,25 @@ struct SObj
 	double smallestTimeStep;
 };
 
-int nextObjectHandle=0;
+static int nextObjectHandle=0;
 
-std::vector<SObj> allObjects;
+static std::vector<SObj> allObjects;
 
 
-LIBRARY simLib; // the CoppeliaSim library that we will dynamically load and bind
+static LIBRARY simLib; // the CoppeliaSim library that we will dynamically load and bind
 
-//FILE* file=NULL;
+bool canOutputMsg(int msgType)
+{
+    int plugin_verbosity = sim_verbosity_default;
+    simGetModuleInfo("Cam",sim_moduleinfo_verbosity,nullptr,&plugin_verbosity);
+    return(plugin_verbosity>=msgType);
+}
 
+void outputMsg(int msgType,const char* msg)
+{
+    if (canOutputMsg(msgType))
+        printf("%s\n",msg);
+}
 
 SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 {
@@ -68,26 +78,15 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 	simLib=loadSimLibrary(temp.c_str());
 	if (simLib==NULL)
 	{
-        std::cout << "Error, could not find or correctly load the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.\n";
+        outputMsg(sim_verbosity_errors,"ReflexxesTypeII plugin error: could not find or correctly load the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.");
         return(0); // Means error, CoppeliaSim will unload this plugin
 	}
 	if (getSimProcAddresses(simLib)==0)
 	{
-        std::cout << "Error, could not find all required functions in the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.\n";
+        outputMsg(sim_verbosity_errors,"ReflexxesTypeII plugin error: could not find all required functions in the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.");
 		unloadSimLibrary(simLib);
         return(0); // Means error, CoppeliaSim will unload this plugin
 	}
-
-    // Check the version of CoppeliaSim:
-    int simVer,simRev;
-    simGetIntegerParameter(sim_intparam_program_version,&simVer);
-    simGetIntegerParameter(sim_intparam_program_revision,&simRev);
-    if( (simVer<30400) || ((simVer==30400)&&(simRev<9)) )
-    {
-        std::cout << "Sorry, your CoppeliaSim copy is somewhat old, CoppeliaSim 3.4.0 rev9 or higher is required. Cannot start 'ReflexxesTypeIV' plugin.\n";
-        unloadSimLibrary(simLib);
-        return(0);
-    }
 
     // The constants:
     // For backward compatibility (variables/constants):
