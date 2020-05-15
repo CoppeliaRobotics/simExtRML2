@@ -41,19 +41,6 @@ static std::vector<SObj> allObjects;
 
 static LIBRARY simLib; // the CoppeliaSim library that we will dynamically load and bind
 
-bool canOutputMsg(int msgType)
-{
-    int plugin_verbosity = sim_verbosity_default;
-    simGetModuleInfo("ReflexxesTypeII",sim_moduleinfo_verbosity,nullptr,&plugin_verbosity);
-    return(plugin_verbosity>=msgType);
-}
-
-void outputMsg(int msgType,const char* msg)
-{
-    if (canOutputMsg(msgType))
-        printf("%s\n",msg);
-}
-
 SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 {
 	// 1. Figure out this plugin's directory:
@@ -78,12 +65,12 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 	simLib=loadSimLibrary(temp.c_str());
 	if (simLib==NULL)
 	{
-        outputMsg(sim_verbosity_errors,"ReflexxesTypeII: error: could not find or correctly load the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.");
+        simAddLog("ReflexxesTypeII",sim_verbosity_errors,"could not find or correctly load the CoppeliaSim library. Cannot start the plugin.");
         return(0); // Means error, CoppeliaSim will unload this plugin
 	}
 	if (getSimProcAddresses(simLib)==0)
 	{
-        outputMsg(sim_verbosity_errors,"ReflexxesTypeII: error: could not find all required functions in the CoppeliaSim library. Cannot start 'ReflexxesTypeII' plugin.");
+        simAddLog("ReflexxesTypeII",sim_verbosity_errors,"could not find all required functions in the CoppeliaSim library. Cannot start the plugin.");
 		unloadSimLibrary(simLib);
         return(0); // Means error, CoppeliaSim will unload this plugin
 	}
