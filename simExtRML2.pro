@@ -3,14 +3,13 @@ include(config.pri)
 QT -= core
 QT -= gui
 
-TARGET = simExtReflexxesTypeII
+TARGET = simExtRML2
 TEMPLATE = lib
 
 DEFINES -= UNICODE
 DEFINES += QT_COMPIL
 CONFIG += shared plugin
 INCLUDEPATH += "ReflexxesTypeII/include"
-INCLUDEPATH += "simExtReflexxesTypeII"
 INCLUDEPATH += "../include"
 
 *-msvc* {
@@ -65,7 +64,7 @@ unix:!symbian {
 
 HEADERS += \
     ../include/simLib.h \
-    simExtReflexxesTypeII/simExtReflexxesTypeII.h \
+    simExtRML2.h \
     ReflexxesTypeII/src/TypeIIRML/ReflexxesAPI.h \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLCalculatePositionalExtrems.h \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLDecisions.h \
@@ -97,7 +96,7 @@ HEADERS += \
 
 SOURCES += \
     ../common/simLib.cpp \
-    simExtReflexxesTypeII/simExtReflexxesTypeII.cpp \
+    simExtRML2.cpp \
     ReflexxesTypeII/src/TypeIIRML/ReflexxesAPI.cpp \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLCalculatePositionalExtrems.cpp \
     ReflexxesTypeII/src/TypeIIRML/TypeIIRMLDecisions.cpp \

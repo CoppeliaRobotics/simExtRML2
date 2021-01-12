@@ -1,4 +1,4 @@
-#include "simExtReflexxesTypeII.h"
+#include "simExtRML2.h"
 #include "simLib.h"
 #include <iostream>
 #include <boost/lexical_cast.hpp>
@@ -65,12 +65,12 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 	simLib=loadSimLibrary(temp.c_str());
 	if (simLib==NULL)
 	{
-        printf("simExtReflexxesTypeII: error: could not find or correctly load the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
+        printf("simExtRML2: error: could not find or correctly load the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
         return(0); // Means error, CoppeliaSim will unload this plugin
 	}
 	if (getSimProcAddresses(simLib)==0)
 	{
-        printf("simExtReflexxesTypeII: error: could not find all required functions in the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
+        printf("simExtRML2: error: could not find all required functions in the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
 		unloadSimLibrary(simLib);
         return(0); // Means error, CoppeliaSim will unload this plugin
 	}
@@ -86,9 +86,6 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
     simRegisterScriptVariable("simrml_recompute_trajectory",(boost::lexical_cast<std::string>(int(simrml_recompute_trajectory))).c_str(),-1);
     simRegisterScriptVariable("simrml_keep_current_vel_if_fallback_strategy",(boost::lexical_cast<std::string>(int(simrml_keep_current_vel_if_fallback_strategy))).c_str(),-1);
 
-
-
-
 	return(PLUGIN_VERSION); // initialization went fine, we return the version number of this plugin (can be queried with simGetModuleName)
 }
 
@@ -101,10 +98,6 @@ SIM_DLLEXPORT void simEnd()
 
 SIM_DLLEXPORT void* simMessage(int message,int* auxiliaryData,void* customData,int* replyData)
 {
-	// Keep following 5 lines at the beginning and unchanged:
-	int errorModeSaved;
-	simGetIntegerParameter(sim_intparam_error_report_mode,&errorModeSaved);
-	simSetIntegerParameter(sim_intparam_error_report_mode,sim_api_errormessage_ignore);
 	void* retVal=NULL;
 
 	if ((message==sim_message_eventcallback_rmlposition))//&&(auxiliaryData[0]!=0)) // if auxiliaryData[0] isn't 0, then we wanna use the type 4 lib!
@@ -672,9 +665,6 @@ SIM_DLLEXPORT void* simMessage(int message,int* auxiliaryData,void* customData,i
 		}
 	}
 
-
-	// Keep following unchanged:
-	simSetIntegerParameter(sim_intparam_error_report_mode,errorModeSaved); // restore previous settings
 	return(retVal);
 }
 
